@@ -123,13 +123,13 @@ class api:
         return answer
 
     def CreatesNewAccessoryAndService(self, name, serviceType):
-        url = self.url + 'api/accessories/{}/{}'.format(name, serviceType)
+        url = self.url + '/api/accessories/{}/{}'.format(name, serviceType)
         answer = requests.post(
-            url=url, headers={'accept': '*/*'}, cookies=self.cookie, timeout=0.5)
+            url=url, headers={'accept': '*/*', 'Content-Type': '*/*'}, cookies=self.cookie, timeout=0.5)
         answer.raise_for_status()
 
     def HideShowAccessory(self, aid, value):
-        url = self.url + '/api/accessories/{}/hidden/{}'.format(aid, value)
+        url = self.url + '/api/accessories/{}/hidden/{}'.format(aid, str(value))
         answer = requests.put(url=url, cookies=self.cookie, timeout=0.5)
         answer.raise_for_status()
 
@@ -171,11 +171,11 @@ class api:
 
         return answer
 
-    def SetCharacteristicLink(self, aid, cid):
+    def SetCharacteristicLink(self, aid, cid, data):
         url = self.url + \
             '/api/accessories/{}/characteristics/{}/link'.format(aid, cid)
         answer = requests.put(
-            url=url, headers={'accept': '*/*'}, cookies=self.cookie, timeout=0.5)
+            url=url, headers={'accept': '*/*'}, data=data, cookies=self.cookie, timeout=0.5)
         answer.raise_for_status()
 
     def SetCharacteristicTrigger(self, in_a_id, in_c_id):
@@ -186,11 +186,11 @@ class api:
             url=url, headers={'accept': '*/*'}, cookies=self.cookie, timeout=0.5)
         answer.raise_for_status()
 
-    def SetСharacteristicValue(self, aid,  cid):
+    def SetСharacteristicValue(self, aid,  cid,  data):
         url = self.url + \
             '/api/accessories/{}/characteristics/{}/value'.format(aid, cid)
         answer = requests.put(
-            url=url, headers={'accept': '*/*'}, cookies=self.cookie, timeout=0.5)
+            url=url, headers={'accept': '*/*'}, data=data, cookies=self.cookie, timeout=0.5)
         answer.raise_for_status()
 
 # Services
