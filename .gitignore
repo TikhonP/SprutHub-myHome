@@ -1,1 +1,6 @@
+# ignore all DS_Store
 .DS_Store*
+
+#ignore pycashe and jupyter cash
+__pycache__/
+.ipynb_checkpionts
