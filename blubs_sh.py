@@ -4,6 +4,7 @@ from yeelight import Bulb
 from time import sleep
 import json
 import logging
+from miio import PhilipsBulb
 
 
 def read_config(configFileName):
@@ -12,17 +13,19 @@ def read_config(configFileName):
     interval = config['interval']
 
     logging.info('Config ------------\n {} \n------------'.format(interval))
-
-    if config['discovery'] == True:
+    # yeelight
+    if config['yeelight']['discovery'] == True:
         logging.info('Discovery True')
-        bulbs = discover_bulbs()
+        ybulbs = discover_bulbs()
     else:
         logging.info('Discovery False')
-        bulbs = config['bulbs']
-    return bulbs, interval, config
+        ybulbs = config['yeelight']['bulbs']
+    # philips
+    fbulbs = config['philips']['bulbs']
+    return ybulbs, fbulbs, interval, config
 
 
-def connect(bulbs, aids):
+def connect_yeelight(bulbs, aids):
     if len(bulbs) != len(aids):
         raise ConfigError("List with bulbs hs different shape\nbulbs list:{}\nsh aid list:{}".format(
             bulbs, aids))
@@ -36,18 +39,37 @@ def connect(bulbs, aids):
     return connections
 
 
-def mainLoop(bulbs, interval, config, sh):
-    connections = connect(bulbs, config['sh_aid'])
-    logging.info('Connections ------------{}------------'.format(connections))
+def connect_philips(bulbs, aids):
+    if len(bulbs) != len(aids):
+        raise ConfigError("List with bulbs hs different shape\nbulbs list:{}\nsh aid list:{}".format(
+            bulbs, aids))
+
+    connections = []
+    i = 0
+    for b, aid in zip(bulbs, aids):
+        connections.append([PhilipsBulb(str(b['ip']), str(b['token'])),
+                            {'currentstatus': None, 'brightness': None, 'colortemp': None}, aid])
+        i += 1
+    return connections
+
+
+def mainLoop(ybulbs, fbulbs, interval, config, sh):
+    yconnections = connect_yeelight(ybulbs, config['yeelight']['sh_aid'])
+    fconnections = connect_philips(fbulbs, config['philips']['sh_aid'])
+    print(yconnections)
+    print()
+    print(fconnections)
+    # logging.info('Connections ------------{}------------'.format(connections))
 
     while True:
         try:
-            for b in connections:
+            for b in yconnections:
                 siate_dict = sh.listOfAllCharacteristicsOfOneServiceAndAccessory(
                     b[2], 10)
                 if siate_dict[1]['value'] != b[1]['currentstatus']:
                     b[1]['currentstatus'] = siate_dict[1]['value']
                     if b[1]['currentstatus'] == 'true':
+                        print(b)
                         b[0].turn_on()
                         logging.info('Turn on bulb')
                     else:
@@ -69,11 +91,38 @@ def mainLoop(bulbs, interval, config, sh):
                         int((1700 * (500 - int(b[1]['colortemp']))) / 140))
                     logging.info('Set color temp {}'.format(
                         int((1700 * (500 - int(b[1]['colortemp']))) / 140)))
+            for b in fconnections:
+                siate_dict = sh.listOfAllCharacteristicsOfOneServiceAndAccessory(
+                    b[2], 10)
+                if siate_dict[0]['value'] != b[1]['currentstatus']:
+                    b[1]['currentstatus'] = siate_dict[1]['value']
+                    if b[1]['currentstatus'] == 'true':
+                        b[0].on()
+                        logging.info('Turn on bulb')
+                    else:
+                        b[0].off()
+                        logging.info('Turn off bulb')
+                if b[1]['currentstatus'] == 'false': continue
+                if siate_dict[2]['value'] == '0':
+                    siate_dict[2]['value'] = '1'
+                if b[1]['brightness'] != siate_dict[2]['value']:
+                    b[1]['brightness'] = int(siate_dict[2]['value'])
+                    b[0].set_brightness(b[1]['brightness'])
+                    logging.info('Set brightness {}'.format(
+                        b[1]['brightness']))
+                if siate_dict[1]['value'] == '0':
+                    siate_dict[1]['value'] = '1'
+                if siate_dict[1]['value'] != b[1]['colortemp']:
+                    b[1]['colortemp'] = siate_dict[1]['value']
+                    b[0].set_color_temperature(
+                        100 - int((int(siate_dict[1]['value']) * 100) / 500))
+                    logging.info('Set color temp {}'.format(
+                        100 - int((int(siate_dict[1]['value']) * 100) / 500)))
 
         except Exception as e:
             logging.error(e)
             if e == 'Bulb closed the connection.':
-                connections = connect(bulbs, config['sh_aid'])
+                yconnections = connect_yeelight(bulbs, config['sh_aid'])
                 continue
                 logging.warning('Reconnected')
             else:
@@ -90,11 +139,11 @@ if __name__ == '__main__':
     configFileName = 'bulbs_config.json'
     logging.info('Filename is "{}"'.format(configFileName))
 
-    bulbs, interval, config = read_config(configFileName)
-    logging.info('bulbs --------\n{}\n--------'.format(bulbs))
+    ybulbs, fbulbs, interval, config = read_config(configFileName)
+    logging.info('bulbs --------\n{}\n--------'.format(ybulbs))
 
     sh = spruthub.api(config['sh_server']['url'])
     t = sh.auth(config['sh_server']['login'], config['sh_server']['password'])
     logging.info('Token - {}'.format(t))
 
-    mainLoop(bulbs, interval, config, sh)
+    mainLoop(ybulbs, fbulbs, interval, config, sh)

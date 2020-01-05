@@ -1,14 +1,23 @@
 {
-  "interval": 0.7,
-  "discovery": true,
-  "sh_aid": [46],
   "sh_server": {
     "url": "192.168.31.133:55555",
-    "login": "<email>",
-    "password": "<password>"
+    "login": "ghjkl@jdjd.ru",
+    "password": "raspberry1"
   },
-  "bulbs": [{
-    "ip": "ip",
-    "port": "port"
-  }]
+  "interval": 1,
+  "yeelight": {
+    "discovery": true,
+    "sh_aid": [46],
+    "bulbs": [{
+      "ip": "ip",
+      "port": "port"
+    }]
+  },
+  "philips": {
+    "sh_aid": [47],
+    "bulbs": [{
+      "ip": "192.168.31.70",
+      "token": "9A6FEBD4E55F743C01074EA005CD57BD"
+    }]
+  }
 }
