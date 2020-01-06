@@ -5,6 +5,7 @@ from time import sleep
 import json
 import logging
 from miio import PhilipsBulb
+from acssesorries import philipsB, yeelightB
 
 
 def read_config(configFileName):
@@ -31,11 +32,8 @@ def connect_yeelight(bulbs, aids):
             bulbs, aids))
 
     connections = []
-    i = 0
     for b, aid in zip(bulbs, aids):
-        connections.append([Bulb(ip=b['ip'], port=b['port']),
-                            {'currentstatus': None, 'color': None, 'colortemp': None}, aid])
-        i += 1
+        connections.append([yeelightB(ip=b['ip'], port=b['port']), aid])
     return connections
 
 
@@ -45,11 +43,8 @@ def connect_philips(bulbs, aids):
             bulbs, aids))
 
     connections = []
-    i = 0
     for b, aid in zip(bulbs, aids):
-        connections.append([PhilipsBulb(str(b['ip']), str(b['token'])),
-                            {'currentstatus': None, 'brightness': None, 'colortemp': None}, aid])
-        i += 1
+        connections.append([philipsB(str(b['ip']), str(b['token'])), aid])
     return connections
 
 
@@ -59,76 +54,38 @@ def mainLoop(ybulbs, fbulbs, interval, config, sh):
     print(yconnections)
     print()
     print(fconnections)
+    print()
     # logging.info('Connections ------------{}------------'.format(connections))
 
     while True:
-        try:
-            for b in yconnections:
-                siate_dict = sh.listOfAllCharacteristicsOfOneServiceAndAccessory(
-                    b[2], 10)
-                if siate_dict[1]['value'] != b[1]['currentstatus']:
-                    b[1]['currentstatus'] = siate_dict[1]['value']
-                    if b[1]['currentstatus'] == 'true':
-                        print(b)
-                        b[0].turn_on()
-                        logging.info('Turn on bulb')
-                    else:
-                        b[0].turn_off()
-                        logging.info('Turn off bulb')
-                h = int(float(siate_dict[2]['value']))
-                s = (float(siate_dict[0]['value']) /
-                     float(siate_dict[0]['maxValue'])) * 100
-                v = int(siate_dict[4]['value'])
-                if b[1]['color'] != (h, s, v):
-                    b[1]['color'] = (h, s, v)
-                    b[0].set_hsv(b[1]['color'][0], b[1]
-                                 ['color'][1], b[1]['color'][2])
-                    logging.info('Set hsv {} {} {}'.format(
-                        str(b[1]['color'][0]), str(b[1]['color'][1]), str(b[1]['color'][2])))
-                if siate_dict[3]['value'] != b[1]['colortemp']:
-                    b[1]['colortemp'] = siate_dict[3]['value']
-                    b[0].set_color_temp(
-                        int((1700 * (500 - int(b[1]['colortemp']))) / 140))
-                    logging.info('Set color temp {}'.format(
-                        int((1700 * (500 - int(b[1]['colortemp']))) / 140)))
-            for b in fconnections:
-                siate_dict = sh.listOfAllCharacteristicsOfOneServiceAndAccessory(
-                    b[2], 10)
-                if siate_dict[0]['value'] != b[1]['currentstatus']:
-                    b[1]['currentstatus'] = siate_dict[1]['value']
-                    if b[1]['currentstatus'] == 'true':
-                        b[0].on()
-                        logging.info('Turn on bulb')
-                    else:
-                        b[0].off()
-                        logging.info('Turn off bulb')
-                if b[1]['currentstatus'] == 'false': continue
-                if siate_dict[2]['value'] == '0':
-                    siate_dict[2]['value'] = '1'
-                if b[1]['brightness'] != siate_dict[2]['value']:
-                    b[1]['brightness'] = int(siate_dict[2]['value'])
-                    b[0].set_brightness(b[1]['brightness'])
-                    logging.info('Set brightness {}'.format(
-                        b[1]['brightness']))
-                if siate_dict[1]['value'] == '0':
-                    siate_dict[1]['value'] = '1'
-                if siate_dict[1]['value'] != b[1]['colortemp']:
-                    b[1]['colortemp'] = siate_dict[1]['value']
-                    b[0].set_color_temperature(
-                        100 - int((int(siate_dict[1]['value']) * 100) / 500))
-                    logging.info('Set color temp {}'.format(
-                        100 - int((int(siate_dict[1]['value']) * 100) / 500)))
+        for b in yconnections:
+            state = sh.InfoAboutOneCharacteristic(b[1][0], b[1][1])['value']
 
-        except Exception as e:
-            logging.error(e)
-            if e == 'Bulb closed the connection.':
-                yconnections = connect_yeelight(bulbs, config['sh_aid'])
-                continue
-                logging.warning('Reconnected')
-            else:
-                raise e
-            sleep(interval)
-            logging.info('Sleeping {} seconds'.format(interval))
+            h = int(float(sh.InfoAboutOneCharacteristic(b[1][0], b[1][5])['value']))
+            s = (float(sh.InfoAboutOneCharacteristic(b[1][0], b[1][4])['value']) /
+                 float(sh.InfoAboutOneCharacteristic(b[1][0], b[1][4])['maxValue'])) * 100
+            v = int(sh.InfoAboutOneCharacteristic(b[1][0], b[1][3])['value'])
+            hsv = (h, s, v)
+
+            color_temp = int(
+                (1700 * (500 - int(sh.InfoAboutOneCharacteristic(b[1][0], b[1][2])['value']))) / 140)
+
+            print('Yeelight ', state, ' h ',
+                  h, ' s ', s, ' v ', v, ' color_temp ', color_temp)
+
+            b[0].update(state, hsv, color_temp)
+
+        for b in fconnections:
+            state = sh.InfoAboutOneCharacteristic(b[1][0], b[1][1])['value']
+            brightness = sh.InfoAboutOneCharacteristic(b[1][0], b[1][3])['value']
+            color_temp = 100 - int((int(sh.InfoAboutOneCharacteristic(b[1][0], b[1][2])['value']) * 100) / 500)
+
+            print('Philips ', state, ' brightness ',
+                  brightness, ' color_temp ', color_temp)
+
+            b[0].update(state, brightness, color_temp)
+
+        sleep(interval)
 
 
 if __name__ == '__main__':
