@@ -70,8 +70,8 @@ def mainLoop(ybulbs, fbulbs, interval, config, sh):
             color_temp = int(
                 (1700 * (500 - int(sh.InfoAboutOneCharacteristic(b[1][0], b[1][2])['value']))) / 140)
 
-            print('Yeelight ', state, ' h ',
-                  h, ' s ', s, ' v ', v, ' color_temp ', color_temp)
+            # print('Yeelight ', state, ' h ',
+                  # h, ' s ', s, ' v ', v, ' color_temp ', color_temp)
 
             b[0].update(state, hsv, color_temp)
 
@@ -80,8 +80,8 @@ def mainLoop(ybulbs, fbulbs, interval, config, sh):
             brightness = sh.InfoAboutOneCharacteristic(b[1][0], b[1][3])['value']
             color_temp = 100 - int((int(sh.InfoAboutOneCharacteristic(b[1][0], b[1][2])['value']) * 100) / 500)
 
-            print('Philips ', state, ' brightness ',
-                  brightness, ' color_temp ', color_temp)
+            # print('Philips ', state, ' brightness ',
+                  # brightness, ' color_temp ', color_temp)
 
             b[0].update(state, brightness, color_temp)
 

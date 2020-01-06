@@ -91,7 +91,7 @@ class yeelightB:
                         self.bulb = Bulb(self.ip, self.port)
                         self.bulb.turn_on()
                     else:
-                        raise e
+                        print(e)
             else:
                 try:
                     self.bulb.turn_off()
@@ -100,7 +100,7 @@ class yeelightB:
                         self.bulb = Bulb(self.ip, self.port)
                         self.bulb.turn_off()
                     else:
-                        raise e
+                        print(e)
         elif self.cur_state == 'true':
             if hsv != self.cur_hsv:
                 self.cur_hsv = hsv
@@ -111,7 +111,7 @@ class yeelightB:
                         self.bulb = Bulb(self.ip, self.port)
                         self.bulb.set_hsv(hsv[0], hsv[1], hsv[2])
                     else:
-                        raise e
+                        print(e)
             if color_temp != self.cur_color_temp:
                 self.cur_color_temp = color_temp
                 try:
@@ -121,4 +121,4 @@ class yeelightB:
                         self.bulb = Bulb(self.ip, self.port)
                         self.bulb.set_color_temp(self.cur_color_temp)
                     else:
-                        raise e
+                        print(e)
