@@ -19,16 +19,16 @@ class philipsB:
         color_temp = int(color_temp)
         if brightness == 0:
             brightness = 1
-            print('brightness set ', brightness)
+            # print('brightness set ', brightness)
         if brightness == 100:
             brightness = 99
-            print('brightness set ', brightness)
+            # print('brightness set ', brightness)
         if color_temp == 0:
             color_temp = 1
-            print('color_temp set ', color_temp)
+            # print('color_temp set ', color_temp)
         if color_temp == 100:
             color_temp = 99
-            print('color_temp set ', color_temp)
+            # print('color_temp set ', color_temp)
 
         if state != self.cur_state:
             self.cur_state = state
