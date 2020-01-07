@@ -92,8 +92,6 @@ def mainLoop(ybulbs, fbulbs, interval, config, sh):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(filename='yeelght_sh.log', filemode='w',
-                        format='%(name)s - %(levelname)s - %(message)s')
     logging.info('Starting...')
 
     configFileName = 'bulbs_config.json'

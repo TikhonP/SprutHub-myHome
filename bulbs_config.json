@@ -7,17 +7,28 @@
   "interval": 1,
   "yeelight": {
     "discovery": true,
-    "sh_aid": [[46, 12, 16, 13, 15, 14]],
+    "sh_aid": [
+      [46, 12, 16, 13, 15, 14]
+    ],
     "bulbs": [{
       "ip": "ip",
       "port": "port"
     }]
   },
   "philips": {
-    "sh_aid": [[47, 12, 14, 13]],
+    "comment": "в sh_aid - [aid, on/off, colorTemp, brightness]",
+    "sh_aid": [
+      [47, 12, 14, 13],
+      [50, 12, 14, 13]
+    ],
     "bulbs": [{
-      "ip": "192.168.31.70",
-      "token": "9A6FEBD4E55F743C01074EA005CD57BD"
-    }]
+        "ip": "192.168.31.70",
+        "token": "9A6FEBD4E55F743C01074EA005CD57BD"
+      },
+      {
+        "ip": "192.168.31.23",
+        "token": "3d48e0597e7a346489fe08101e02c61f"
+      }
+    ]
   }
 }
