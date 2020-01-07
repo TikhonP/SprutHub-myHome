@@ -58,32 +58,36 @@ def mainLoop(ybulbs, fbulbs, interval, config, sh):
     # logging.info('Connections ------------{}------------'.format(connections))
 
     while True:
-        for b in yconnections:
-            state = sh.InfoAboutOneCharacteristic(b[1][0], b[1][1])['value']
+        try:
+            for b in yconnections:
+                state = sh.InfoAboutOneCharacteristic(b[1][0], b[1][1])['value']
 
-            h = int(float(sh.InfoAboutOneCharacteristic(b[1][0], b[1][5])['value']))
-            s = (float(sh.InfoAboutOneCharacteristic(b[1][0], b[1][4])['value']) /
-                 float(sh.InfoAboutOneCharacteristic(b[1][0], b[1][4])['maxValue'])) * 100
-            v = int(sh.InfoAboutOneCharacteristic(b[1][0], b[1][3])['value'])
-            hsv = (h, s, v)
+                h = int(float(sh.InfoAboutOneCharacteristic(b[1][0], b[1][5])['value']))
+                s = (float(sh.InfoAboutOneCharacteristic(b[1][0], b[1][4])['value']) /
+                     float(sh.InfoAboutOneCharacteristic(b[1][0], b[1][4])['maxValue'])) * 100
+                v = int(sh.InfoAboutOneCharacteristic(b[1][0], b[1][3])['value'])
+                hsv = (h, s, v)
 
-            color_temp = int(
-                (1700 * (500 - int(sh.InfoAboutOneCharacteristic(b[1][0], b[1][2])['value']))) / 140)
+                color_temp = int(
+                    (1700 * (500 - int(sh.InfoAboutOneCharacteristic(b[1][0], b[1][2])['value']))) / 140)
 
-            # print('Yeelight ', state, ' h ',
-                  # h, ' s ', s, ' v ', v, ' color_temp ', color_temp)
+                # print('Yeelight ', state, ' h ',
+                      # h, ' s ', s, ' v ', v, ' color_temp ', color_temp)
 
-            b[0].update(state, hsv, color_temp)
+                b[0].update(state, hsv, color_temp)
 
-        for b in fconnections:
-            state = sh.InfoAboutOneCharacteristic(b[1][0], b[1][1])['value']
-            brightness = sh.InfoAboutOneCharacteristic(b[1][0], b[1][3])['value']
-            color_temp = 100 - int((int(sh.InfoAboutOneCharacteristic(b[1][0], b[1][2])['value']) * 100) / 500)
+            for b in fconnections:
+                state = sh.InfoAboutOneCharacteristic(b[1][0], b[1][1])['value']
+                brightness = sh.InfoAboutOneCharacteristic(b[1][0], b[1][3])['value']
+                color_temp = 100 - int((int(sh.InfoAboutOneCharacteristic(b[1][0], b[1][2])['value']) * 100) / 500)
 
-            # print('Philips ', state, ' brightness ',
-                  # brightness, ' color_temp ', color_temp)
+                # print('Philips ', state, ' brightness ',
+                      # brightness, ' color_temp ', color_temp)
 
-            b[0].update(state, brightness, color_temp)
+                b[0].update(state, brightness, color_temp)
+        except Exception as e:
+            print(e)
+            sleep(20)
 
         sleep(interval)
 
