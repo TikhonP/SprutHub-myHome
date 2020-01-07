@@ -94,7 +94,7 @@ def mainLoop(ybulbs, fbulbs, interval, config, sh):
 if __name__ == '__main__':
     logging.info('Starting...')
 
-    configFileName = 'bulbs_config.json'
+    configFileName = 'configs/bulbs_config.json'
     logging.info('Filename is "{}"'.format(configFileName))
 
     ybulbs, fbulbs, interval, config = read_config(configFileName)
