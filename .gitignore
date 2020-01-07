@@ -3,4 +3,5 @@
 
 #ignore pycashe and jupyter cash
 __pycache__/
-.ipynb_checkpionts
+.ipynb_checkpoints
+noteb.ipynb
