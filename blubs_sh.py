@@ -1,10 +1,8 @@
 import spruthub
 from yeelight import discover_bulbs
-from yeelight import Bulb
 from time import sleep
 import json
 import logging
-from miio import PhilipsBulb
 from acssesorries import philipsB, yeelightB
 
 
@@ -75,6 +73,7 @@ def mainLoop(ybulbs, fbulbs, interval, config, sh):
                       # h, ' s ', s, ' v ', v, ' color_temp ', color_temp)
 
                 b[0].update(state, hsv, color_temp)
+            sleep(interval/2)
 
             for b in fconnections:
                 state = sh.InfoAboutOneCharacteristic(b[1][0], b[1][1])['value']
@@ -89,7 +88,7 @@ def mainLoop(ybulbs, fbulbs, interval, config, sh):
             print(e)
             sleep(20)
 
-        sleep(interval)
+        sleep(interval/2)
 
 
 if __name__ == '__main__':
