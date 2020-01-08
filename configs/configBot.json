@@ -1,1 +1,19 @@
-{"token": "", "authTokens": ["84fe97f7100da019b0a00c4bb35ef90f"], "authedUsers": [304915293], "admin": [304915293], "data": {}}
+{
+  "token": "",
+  "authTokens": [],
+  "authedUsers": [304915293, 692227940],
+  "admin": [304915293],
+  "data": {
+    "692227940": {
+      "is_auth": false
+    },
+    "304915293": {
+      "is_auth": false,
+      "new_file_name": false,
+      "new_file_path": [true, "sdgvajf"]
+    }
+  },
+  "logs": {
+
+  }
+}
