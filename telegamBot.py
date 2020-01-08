@@ -69,6 +69,7 @@ def text(msg):
                 bot.send_message(user, "Введите путь к файлу")
             elif config["data"][str(user)]['new_file_path'][0]:
                 config['logs'][config["data"][str(user)]['new_file_path'][1]] = text
+                config["data"][str(user)]['new_file_path'][0] = False
                 saveConfig(config, configFileName)
                 bot.send_message(user, "Файл добавлен")
             else:
