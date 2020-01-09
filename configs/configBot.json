@@ -1,19 +1,16 @@
 {
-  "token": "",
+  "token": "ваш токен",
   "authTokens": [],
-  "authedUsers": [304915293, 692227940],
-  "admin": [304915293],
+  "authedUsers": [],
+  "admin": [],
   "data": {
-    "692227940": {
-      "is_auth": false
-    },
     "304915293": {
       "is_auth": false,
       "new_file_name": false,
-      "new_file_path": [true, "sdgvajf"]
+      "new_file_path": [false, ""],
+      "is_edit": [false, ""]
     }
   },
-  "logs": {
-
-  }
+  "logs": {},
+  "homename": "Дом"
 }
