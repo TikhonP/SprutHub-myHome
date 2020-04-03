@@ -1,0 +1,5 @@
+logging
+yeelight
+python-miio
+requests
+json

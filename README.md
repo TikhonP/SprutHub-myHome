@@ -1,6 +1,6 @@
 # Мой дом на SprutHub
 
-#### Api SH
+#### Библиотека Api SH
 
 В файле spruthub.py класс api:
 
@@ -8,6 +8,58 @@
 sh = spruthub.api('<путь к серверу>')
 sh.auth('<логин>', '<пароль>') # Возвращает токен
 ```
+#### Подключение ламп philips и yeelight к spruthub
+
+Склонируйте репозиторий
+```bash
+git clone https://github.com/TikhonP/SprutHub-myHome.git
+cd SprutHub-myHome
+```
+Отредактируйте файл настройки `vim configs/blubs_config.json`
+```json
+{
+  "sh_server": {
+    "url": "ip:55555", < ip address
+    "login": "<login>",
+    "password": "<pass>"
+  },
+  "interval": 1, < интервал проверки в секундах
+  "yeelight": {
+    "discovery": true, < оставьте включенным если у вас одна лампа yeelight
+    "sh_aid": [
+      [46, 12, 16, 13, 15, 14] < [aid, cid (state), cid(color_temp), cid(value), cid(saturation), cid(hue)]
+    ],
+    "bulbs": [{
+      "ip": "ip",
+      "port": "port" < оставить так, если одна лампа  yeelight
+    }]
+  },
+  "philips": {
+    "comment": "в sh_aid - [aid, on/off, colorTemp, brightness]",
+    "sh_aid": [
+      [47, 12, 14, 13], < [aid, on/off, colorTemp, brightness]
+      [50, 12, 14, 13]
+    ],
+    "bulbs": [{
+        "ip": "192.168.31.70", < ip лампы philips
+        "token": "9A6FEBD4E55F743C01074EA005CD57BD" < токен
+      },
+      {
+        "ip": "192.168.31.23",
+        "token": "3d48e0597e7a346489fe08101e02c61f"
+      }
+    ]
+  }
+}
+```
+
+Запустите
+
+```bash
+python3 -m pip install -r req.txt
+python3 blubs_sh.py
+```
+
 
 # Бот для простого доступа к файлам
 
@@ -23,7 +75,7 @@ sh.auth('<логин>', '<пароль>') # Возвращает токен
 $ pip install telebot json secrets
 ```
 
-Пропишите свой токен в поле "token" файла "configBot.json" и положите этот файл в папку "configs/". (Если вы клоннировали репозиторий, он уже лежит в папке "configs/")
+Пропишите свой токен в поле "token" файла "configBot.json" и положите этот файл в папку "configs/". (Если вы клоннировали репозиторий, он уже лежит в папке `configs/`)
 
 Запустите бота:
 
