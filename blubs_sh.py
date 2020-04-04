@@ -2,7 +2,7 @@ import spruthub
 from yeelight import discover_bulbs
 from time import sleep
 import json
-import logging
+# import logging
 from acssesorries import philipsB, yeelightB
 
 
@@ -11,13 +11,13 @@ def read_config(configFileName):
         config = json.load(json_file)
     interval = config['interval']
 
-    logging.info('Config ------------\n {} \n------------'.format(interval))
+    # logging.info('Config ------------\n {} \n------------'.format(interval))
     # yeelight
     if config['yeelight']['discovery'] == True:
-        logging.info('Discovery True')
+        # logging.info('Discovery True')
         ybulbs = discover_bulbs()
     else:
-        logging.info('Discovery False')
+        # logging.info('Discovery False')
         ybulbs = config['yeelight']['bulbs']
     # philips
     fbulbs = config['philips']['bulbs']
@@ -92,16 +92,16 @@ def mainLoop(ybulbs, fbulbs, interval, config, sh):
 
 
 if __name__ == '__main__':
-    logging.info('Starting...')
+    # logging.info('Starting...')
 
     configFileName = 'configs/bulbs_config.json'
-    logging.info('Filename is "{}"'.format(configFileName))
+    # logging.info('Filename is "{}"'.format(configFileName))
 
     ybulbs, fbulbs, interval, config = read_config(configFileName)
-    logging.info('bulbs --------\n{}\n--------'.format(ybulbs))
+    # logging.info('bulbs --------\n{}\n--------'.format(ybulbs))
 
     sh = spruthub.api(config['sh_server']['url'])
     t = sh.auth(config['sh_server']['login'], config['sh_server']['password'])
-    logging.info('Token - {}'.format(t))
+    # logging.info('Token - {}'.format(t))
 
     mainLoop(ybulbs, fbulbs, interval, config, sh)

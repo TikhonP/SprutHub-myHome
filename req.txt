@@ -1,4 +1,3 @@
-logging
 yeelight
 python-miio
 requests

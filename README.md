@@ -1,6 +1,6 @@
 # Мой дом на SprutHub
 
-#### Библиотека Api SH
+### Библиотека Api SH
 
 В файле spruthub.py класс api:
 
@@ -8,41 +8,63 @@
 sh = spruthub.api('<путь к серверу>')
 sh.auth('<логин>', '<пароль>') # Возвращает токен
 ```
-#### Подключение ламп philips и yeelight к spruthub
 
+### Подключение ламп philips и yeelight к spruthub
+#### Настройка
 Склонируйте репозиторий
+
 ```bash
 git clone https://github.com/TikhonP/SprutHub-myHome.git
 cd SprutHub-myHome
 ```
+
 Отредактируйте файл настройки `vim configs/blubs_config.json`
+Введите данные сервера sh
+
 ```json
-{
   "sh_server": {
-    "url": "ip:55555", < ip address
+    "url": "ip:55555",
     "login": "<login>",
     "password": "<pass>"
   },
-  "interval": 1, < интервал проверки в секундах
+```
+
+Интервал проверки состояния в секундах
+
+```json
+  "interval": 1,
+```
+###### Yeelight
+Discovery оставьте включенным если у вас одна лампа yeelight
+Sh_aid - Параметры устройства в sh `[accessoryid, characteristicid (state), cid(color_temp), cid(value), cid(saturation), cid(hue)]`
+Bulbs (ip, port) оставить так, если только одна лампа  yeelight
+
+```json
   "yeelight": {
-    "discovery": true, < оставьте включенным если у вас одна лампа yeelight
+    "discovery": true,
     "sh_aid": [
-      [46, 12, 16, 13, 15, 14] < [aid, cid (state), cid(color_temp), cid(value), cid(saturation), cid(hue)]
+      [46, 12, 16, 13, 15, 14]
     ],
     "bulbs": [{
       "ip": "ip",
-      "port": "port" < оставить так, если одна лампа  yeelight
+      "port": "port"
     }]
   },
+```
+###### Philips
+Sh_aid - `[aid, on/off, colorTemp, brightness]`
+Перечислите все лампы таким образом
+bulbs ip, token для каждой лампы в той же последовательности
+```json
   "philips": {
     "comment": "в sh_aid - [aid, on/off, colorTemp, brightness]",
     "sh_aid": [
-      [47, 12, 14, 13], < [aid, on/off, colorTemp, brightness]
+      [47, 12, 14, 13]
       [50, 12, 14, 13]
     ],
     "bulbs": [{
-        "ip": "192.168.31.70", < ip лампы philips
-        "token": "9A6FEBD4E55F743C01074EA005CD57BD" < токен
+        "ip": "192.168.31.70",
+        "token": "9A6FEBD4E55F743C01074EA005CD57BD"
       },
       {
         "ip": "192.168.31.23",
@@ -50,15 +72,16 @@ cd SprutHub-myHome
       }
     ]
   }
-}
 ```
 
-Запустите
+#### Запуск
+Проверено на python 3.7
 
 ```bash
 python3 -m pip install -r req.txt
 python3 blubs_sh.py
 ```
+
 
 
 # Бот для простого доступа к файлам
@@ -100,6 +123,7 @@ $ python3 telegramBot.py
 },
 ...
 ```
+
 где "123456" ваше имя пользователя.
 
 #### Использование
